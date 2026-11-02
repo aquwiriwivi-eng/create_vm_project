@@ -1,0 +1,11 @@
+#cloud-config
+users:
+  - name: ubuntu_auto_1
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    shell: /bin/bash
+    passwd: HERE_MUST_BE_PASSWORD_WHAT_I_HASHED_VIA_OPENSSL_CHEC_PROJECT #DONT FORGET RENAME FILE AS user-data
+    ssh_authorized_keys:
+      - ssh-ed25519 HERE_MUST_BE_HASH_FROM_SSH_PUB vmsk@vmskwivi-x99qd4 #DONT FORGET RENAME FILE AS user-data
+ssh_pwauth: True
+hostname: ubuntu-vm-auto-01
+package_update: true
