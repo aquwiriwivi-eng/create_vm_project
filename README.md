@@ -176,7 +176,7 @@ sudo rm -f /var/lib/libvirt/images/ubuntu-cli-vm.qcow2
 
 - **VMware Workstation** (с утилитой `vmrun.exe`) — скрипт ищет её в `C:\Program Files (x86)\VMware\VMware Workstation\` и `C:\Program Files\VMware\VMware Workstation\`
 - **QEMU for Windows** ([qemu.weilnetz.de/w64](https://qemu.weilnetz.de/w64/)) — нужен только `qemu-img.exe`; скрипт находит его в `C:\Program Files\qemu\` или в `PATH`
-- Windows PowerShell 5.1 (есть в Windows 10) и доступ в интернет
+- Windows PowerShell 7.6.9 (Windows 10 по умолчанию стоит только PowerShell 5.1, на 5.1 замечена нестабильная работа, так что рекомендуется 7.6.9) и доступ в интернет
 - Свободно ~5 ГБ на диске (образ ~400 МБ кэшируется, диск ВМ — до 20 ГБ)
 
 ### Подготовка
