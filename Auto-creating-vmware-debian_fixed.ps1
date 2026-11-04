@@ -23,9 +23,9 @@ $diskSize  = '20G'
 $debianUrl = 'https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2'
 
 $sshUser   = 'vmsk'
-$sshPubKey = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINncl4erfsbxC0CRmRGfu1sPakZA6rmhpufrEyBtDlr1 admin@DESKTOP-7CGROD6'
+$sshPubKey = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINncl4erfsbxC0CRmRGfu1sPakZA6rmhpufrEyBtDlr1 admin@DESKTOP-7CGROD6' # Your ssh pubkey
 # SHA-512 хеш пароля (openssl passwd -6 / mkpasswd -m sha-512)
-$passHash  = '$6$RG2d1nBacqS5EYQP$g/mT0eTqnNllyKEJlPDE59VYADvikHpSWcQ44kkCwB6kLMGcmJhLtMWLL7IlnsYOKDaB/Y/DBHgF2YBA8XGFv0'
+$passHash  = '$6$MKX7NFh.dBIRZeR/$ai3ukwag.33.ybM/3pAo46K1ZFAqJytXNM6nMzbhRTbJG6rt7WLFLjd3B6aIm/lklaDM3Rky8RufFdNUc13lr1' # Password = 12345
 # ===================================================================
 
 $baseDir    = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
