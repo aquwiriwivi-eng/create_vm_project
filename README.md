@@ -1,6 +1,8 @@
-# 🚀 Применение технологии виртуальных машин для решения задач администрирования
+🇬🇧 English | [🇷🇺 Русский](README.ru.md)
 
-**Разработка практического стенда виртуализации на базе KVM/QEMU, VMware Workstation и Cloud-init**
+# 🚀 Applying Virtual Machine Technology to System Administration Tasks
+
+**Building a hands-on virtualization lab based on KVM/QEMU, VMware Workstation and Cloud-init**
 
 ![Debian 13](https://img.shields.io/badge/OS-Debian%2013-blueviolet?style=for-the-badge&logo=debian)
 ![KVM](https://img.shields.io/badge/Hypervisor-KVM%20%2F%20QEMU-orange?style=for-the-badge&logo=linux)
@@ -11,85 +13,86 @@
 
 ---
 
-## 📌 О проекте
+## 📌 About the project
 
-Репозиторий содержит скрипты автоматизации и конфигурационные файлы, разработанные в рамках курсового проекта.
+This repository contains automation scripts and configuration files developed as part of a course project.
 
-Проект посвящён исследованию технологии виртуализации и её практическому применению для типовых задач системного и сетевого администрирования с использованием подхода **Infrastructure as Code (IaC)**: виртуальная машина создаётся и настраивается одной командой, без ручной установки ОС.
+The project explores virtualization technology and its practical use in typical system and network administration tasks, following the **Infrastructure as Code (IaC)** approach: a virtual machine is created and configured with a single command, with no manual OS installation.
 
-Реализованы два сценария:
+Two scenarios are implemented:
 
-| Сценарий | Хост | Гипервизор | Гостевая ОС | Скрипт |
-|----------|------|------------|-------------|--------|
+| Scenario | Host | Hypervisor | Guest OS | Script |
+|----------|------|------------|----------|--------|
 | **Linux** | Debian 13 (Trixie) | KVM / QEMU (`libvirt`) | Ubuntu 24.04 (cloud image) | `create_cloud_vm.sh` |
 | **Windows** | Windows 10 | VMware Workstation | Debian 13 (cloud image) | `create_vmware_vm.ps1` |
 
 ---
 
-## 🛠️ Технологический стек
+## 🛠️ Technology stack
 
-| Категория | Технологии |
-|-----------|------------|
-| **Хост-системы** | Debian 13 (Trixie), Windows 10 |
-| **Гипервизоры** | KVM, QEMU, `libvirt`, `virsh`, `virt-install`; VMware Workstation (`vmrun`) |
-| **Работа с образами** | `qemu-img` (resize, конвертация qcow2 → VMDK), `cloud-localds` / IMAPI2 (создание `seed.iso`) |
-| **Автоматизация деплоя** | Cloud-init (`user-data`, `meta-data`), Bash, PowerShell |
-| **Контейнеризация** | Docker, Docker Compose (стек `example-voting-app`) |
+| Category | Technologies |
+|----------|--------------|
+| **Host systems** | Debian 13 (Trixie), Windows 10 |
+| **Hypervisors** | KVM, QEMU, `libvirt`, `virsh`, `virt-install`; VMware Workstation (`vmrun`) |
+| **Image handling** | `qemu-img` (resize, qcow2 → VMDK conversion), `cloud-localds` / IMAPI2 (building `seed.iso`) |
+| **Deployment automation** | Cloud-init (`user-data`, `meta-data`), Bash, PowerShell |
+| **Containerization** | Docker, Docker Compose (`example-voting-app` stack) |
 
 ---
 
-## 📂 Структура репозитория
+## 📂 Repository structure
 
 ```
 .
-├── create_vm.sh             # Linux: создание ВМ из ISO-образа через virt-install
-├── create_cloud_vm.sh       # Linux: деплой cloud-образа Ubuntu (resize диска + cloud-init)
-├── create_vmware_vm.ps1     # Windows: деплой cloud-образа Debian 13 в VMware Workstation
-├── user-data                # Cloud-init (Linux): пользователь, SSH-ключ, sudo, обновление пакетов
-├── meta-data                # Cloud-init (Linux): instance-id и hostname
-└── README.md
+├── create_vm.sh             # Linux: create a VM from an ISO image via virt-install
+├── create_cloud_vm.sh       # Linux: deploy an Ubuntu cloud image (disk resize + cloud-init)
+├── create_vmware_vm.ps1     # Windows: deploy a Debian 13 cloud image in VMware Workstation
+├── user-data                # Cloud-init (Linux): user, SSH key, sudo, package updates
+├── meta-data                # Cloud-init (Linux): instance-id and hostname
+├── README.md                # Documentation (English)
+└── README.ru.md             # Documentation (Russian)
 ```
 
-### 💡 Описание компонентов
+### 💡 Components
 
-- **`create_vm.sh`** — классическая установка ВМ из ISO через `virt-install` (интерактивная установка ОС). Путь к ISO в скрипте прописан жёстко — замените его на свой.
-- **`create_cloud_vm.sh`** — автоматический деплой облачного образа **Ubuntu 24.04**: пересоздаёт ВМ, генерирует `seed.iso` из `user-data`/`meta-data`, копирует базовый образ, расширяет диск до 20 ГБ через `qemu-img` и запускает ВМ без консоли (`--noautoconsole`).
-- **`create_vmware_vm.ps1`** — то же самое для **Windows + VMware Workstation**: скачивает **Debian 13** cloud image, расширяет диск, конвертирует qcow2 → VMDK, создаёт `.vmx` и `seed.iso` с настройками cloud-init (генерирует их сам, `user-data` из репозитория не использует), запускает ВМ и выводит её IP.
-- **`user-data`** — конфигурация cloud-init для Linux-сценария: создаёт пользователя `ubuntu_auto_1`, добавляет SSH-ключ, настраивает `sudo` и обновляет пакеты.
-- **`meta-data`** — `instance-id` и имя хоста ВМ.
+- **`create_vm.sh`** — classic VM creation from an ISO via `virt-install` (interactive OS installation). The ISO path is hard-coded in the script — replace it with your own.
+- **`create_cloud_vm.sh`** — automated deployment of an **Ubuntu 24.04** cloud image: recreates the VM, builds `seed.iso` from `user-data`/`meta-data`, copies the base image, grows the disk to 20 GB with `qemu-img` and starts the VM without a console (`--noautoconsole`).
+- **`create_vmware_vm.ps1`** — the same idea for **Windows + VMware Workstation**: downloads the **Debian 13** cloud image, grows the disk, converts qcow2 → VMDK, creates the `.vmx` and a `seed.iso` with the cloud-init settings (it generates them itself and does not use the repository's `user-data`), starts the VM and prints its IP address.
+- **`user-data`** — cloud-init configuration for the Linux scenario: creates the `ubuntu_auto_1` user, adds an SSH key, configures `sudo` and updates packages.
+- **`meta-data`** — the VM's `instance-id` and hostname.
 
-> ⚠️ **Перед запуском замените в `user-data` (и в начале `.ps1`) SSH-ключ и хеш пароля на свои.** В репозитории лежат примеры автора: с чужим публичным ключом вы не сможете войти, а пароль из примера нельзя использовать нигде, кроме тестового стенда.
+> ⚠️ **Before running, replace the SSH key and password hash in `user-data` (and at the top of the `.ps1`) with your own.** The repository contains the author's examples: you will not be able to log in with someone else's public key, and the example password must not be used anywhere except a throwaway lab.
 
 ---
 
-## 🔑 Подготовка ключа и пароля
+## 🔑 Preparing a key and a password
 
-**SSH-ключ** (если ещё нет). Приватная часть остаётся у вас, в ВМ попадает только публичная (`.pub`):
+**SSH key** (if you don't have one yet). The private part stays with you; only the public part (`.pub`) goes into the VM:
 
 ```bash
 ssh-keygen -t ed25519
 cat ~/.ssh/id_ed25519.pub        # Windows PowerShell: type $env:USERPROFILE\.ssh\id_ed25519.pub
 ```
 
-Содержимое `id_ed25519.pub` вставьте в `ssh_authorized_keys` (`user-data`) или в переменную `$sshPubKey` (`.ps1`).
+Paste the contents of `id_ed25519.pub` into `ssh_authorized_keys` (`user-data`) or into the `$sshPubKey` variable (`.ps1`).
 
-**Хеш пароля** (SHA-512) для поля `passwd`:
+**Password hash** (SHA-512) for the `passwd` field:
 
 ```bash
 openssl passwd -6
 ```
 
-На Windows `openssl` есть в составе Git for Windows (`C:\Program Files\Git\usr\bin\openssl.exe`) и в WSL.
+On Windows, `openssl` is included with Git for Windows (`C:\Program Files\Git\usr\bin\openssl.exe`) and available in WSL.
 
-> ℹ️ Основной способ входа — **по SSH-ключу**. По умолчанию cloud-init блокирует пароль созданного пользователя (`lock_passwd: true`), поэтому пароль в `passwd` сам по себе не позволяет войти. Если нужен вход по паролю (например, с консоли ВМ), добавьте пользователю `lock_passwd: false` (в `.ps1` это уже сделано).
+> ℹ️ The main way to log in is **an SSH key**. By default cloud-init locks the created user's password (`lock_passwd: true`), so setting `passwd` alone does not let you log in with it. If you need password login (for example from the VM console), add `lock_passwd: false` to the user (the `.ps1` already does this).
 
 ---
 
-## 🐧 Вариант A: Linux (KVM/QEMU, Debian 13)
+## 🐧 Option A: Linux (KVM/QEMU, Debian 13)
 
-### 1. Подготовка хост-системы
+### 1. Preparing the host
 
-Установите пакеты виртуализации и утилиты:
+Install the virtualization packages and utilities:
 
 ```bash
 sudo apt update
@@ -97,68 +100,68 @@ sudo apt install -y qemu-system qemu-utils libvirt-daemon-system libvirt-clients
     bridge-utils virtinst cloud-image-utils git
 ```
 
-Запустите `libvirtd` и добавьте в автозагрузку:
+Start `libvirtd` and enable it at boot:
 
 ```bash
 sudo systemctl enable --now libvirtd
 ```
 
-Добавьте себя в группы `libvirt` и `kvm`, затем **перезайдите в сессию** (или выполните `newgrp libvirt`):
+Add yourself to the `libvirt` and `kvm` groups, then **log out and back in** (or run `newgrp libvirt`):
 
 ```bash
 sudo usermod -aG libvirt,kvm $USER
 ```
 
-Убедитесь, что сеть `default` запущена (в ней ВМ получает IP по DHCP):
+Make sure the `default` network is running (the VM gets its IP from it via DHCP):
 
 ```bash
 sudo virsh net-list --all
-sudo virsh net-start default        # если она неактивна
+sudo virsh net-start default        # if it is inactive
 sudo virsh net-autostart default
 ```
 
-### 2. Получение проекта и базового образа
+### 2. Getting the project and the base image
 
 ```bash
 git clone https://github.com/aquwiriwivi-eng/create_vm_project.git
 cd create_vm_project
 ```
 
-Отредактируйте `user-data`: подставьте свой SSH-ключ и хеш пароля.
+Edit `user-data`: put in your SSH key and password hash.
 
-Скачайте cloud-образ Ubuntu 24.04 в каталог образов libvirt **под тем именем, которое ожидает скрипт**:
+Download the Ubuntu 24.04 cloud image into the libvirt images directory **under the file name the script expects**:
 
 ```bash
 sudo wget -O /var/lib/libvirt/images/ubuntu-24.04-server-cloudimg-amd64.img \
     https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 ```
 
-### 3. Запуск деплоя
+### 3. Running the deployment
 
-Запускайте скрипт **из каталога репозитория** (он читает `user-data` и `meta-data` из текущей папки) и от обычного пользователя — `sudo` внутри скрипта уже есть:
+Run the script **from the repository directory** (it reads `user-data` and `meta-data` from the current folder) and as a regular user — the script already uses `sudo` internally:
 
 ```bash
 chmod +x create_cloud_vm.sh
 ./create_cloud_vm.sh
 ```
 
-### 4. Подключение к ВМ
+### 4. Connecting to the VM
 
-Подождите 1–2 минуты (идёт первая загрузка и cloud-init), затем узнайте IP, выданный DHCP-сервером `libvirt`:
+Wait 1–2 minutes (first boot and cloud-init), then find the IP address leased by the `libvirt` DHCP server:
 
 ```bash
 sudo virsh net-dhcp-leases default
 ```
 
-Подключитесь по SSH (пользователь задан в `user-data`):
+Connect over SSH (the user is defined in `user-data`):
 
 ```bash
-ssh ubuntu_auto_1@<IP_АДРЕС_ВМ>
+ssh ubuntu_auto_1@<VM_IP_ADDRESS>
 ```
 
-### Повторный запуск и удаление
+### Re-running and removing the VM
 
-Повторный запуск `./create_cloud_vm.sh` удаляет прежнюю ВМ вместе с диском и создаёт новую. Удалить вручную:
+Running `./create_cloud_vm.sh` again deletes the previous VM together with its disk and creates a new one. To remove it manually:
 
 ```bash
 sudo virsh destroy ubuntu-cloud-cli
@@ -166,103 +169,107 @@ sudo virsh undefine ubuntu-cloud-cli --nvram
 sudo rm -f /var/lib/libvirt/images/ubuntu-cli-vm.qcow2
 ```
 
-> ⚠️ `create_vm.sh` и `create_cloud_vm.sh` используют один и тот же файл диска `/var/lib/libvirt/images/ubuntu-cli-vm.qcow2`. `create_cloud_vm.sh` его **удаляет** при запуске, поэтому не используйте оба скрипта для одной и той же ВМ.
+> ⚠️ `create_vm.sh` and `create_cloud_vm.sh` use the same disk file, `/var/lib/libvirt/images/ubuntu-cli-vm.qcow2`. `create_cloud_vm.sh` **deletes** it on start, so don't use both scripts for the same VM.
 
 ---
 
-## 🪟 Вариант B: Windows 10 (VMware Workstation)
+## 🪟 Option B: Windows 10 (VMware Workstation)
 
-### Требования
+### Requirements
 
-- **VMware Workstation** (с утилитой `vmrun.exe`) — скрипт ищет её в `C:\Program Files (x86)\VMware\VMware Workstation\` и `C:\Program Files\VMware\VMware Workstation\`
-- **QEMU for Windows** ([qemu.weilnetz.de/w64](https://qemu.weilnetz.de/w64/)) — нужен только `qemu-img.exe`; скрипт находит его в `C:\Program Files\qemu\` или в `PATH`
-- Windows PowerShell 7.6.9 (Windows 10 по умолчанию стоит только PowerShell 5.1, на 5.1 замечена нестабильная работа, так что рекомендуется 7.6.9) и доступ в интернет
-- Свободно ~5 ГБ на диске (образ ~400 МБ кэшируется, диск ВМ — до 20 ГБ)
+- **VMware Workstation** (with the `vmrun.exe` utility) — the script looks for it in `C:\Program Files (x86)\VMware\VMware Workstation\` and `C:\Program Files\VMware\VMware Workstation\`
+- **QEMU for Windows** ([qemu.weilnetz.de/w64](https://qemu.weilnetz.de/w64/)) — only `qemu-img.exe` is needed; the script finds it in `C:\Program Files\qemu\` or in `PATH`
+- PowerShell 5.1 (built into Windows 10) **or newer**, including PowerShell 7 (`pwsh`), and internet access
+- About 5 GB of free disk space (the ~400 MB image is cached; the VM disk grows up to 20 GB)
 
-### Подготовка
+### Preparation
 
-Откройте `create_vmware_vm.ps1` и замените в блоке настроек свои значения:
+Open `create_vmware_vm.ps1` and replace the values in the settings block with your own:
 
 ```powershell
 $sshUser   = 'vmsk'
-$sshPubKey = 'ssh-ed25519 AAAA... ваш_ключ'
-$passHash  = '$6$...'   # результат openssl passwd -6
+$sshPubKey = 'ssh-ed25519 AAAA... your_key'
+$passHash  = '$6$...'   # output of openssl passwd -6
 ```
 
-Здесь же можно изменить имя ВМ, объём памяти (`$memMB`), число CPU (`$cpus`) и размер диска (`$diskSize`).
+You can also change the VM name, memory (`$memMB`), CPU count (`$cpus`) and disk size (`$diskSize`) there.
 
-### Запуск
+### Running
 
 ```powershell
+# Windows PowerShell 5.1 (built in)
 powershell -ExecutionPolicy Bypass -File .\create_vmware_vm.ps1
+
+# or PowerShell 7
+pwsh -ExecutionPolicy Bypass -File .\create_vmware_vm.ps1
 ```
 
-Если ВМ уже была создана этим скриптом, пересоздайте её с нуля (старая ВМ будет остановлена и удалена):
+If the VM was already created by this script, recreate it from scratch (the old VM will be stopped and deleted):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\create_vmware_vm.ps1 -Force
 ```
 
-### Что делает скрипт
+### What the script does
 
-1. Находит `qemu-img.exe` и `vmrun.exe`.
-2. Генерирует `user-data` и `meta-data` и собирает из них `seed.iso` (метка `cidata`, файловая система ISO9660 + **Joliet** — без Joliet cloud-init не находит файлы).
-3. Скачивает Debian 13 cloud image в каталог `_cache` (при повторных запусках берёт из кэша).
-4. Расширяет диск до 20 ГБ и конвертирует qcow2 → VMDK.
-5. Создаёт `.vmx` (4 CPU, 4 ГБ ОЗУ, сеть NAT, `seed.iso` как CD-ROM).
-6. Запускает ВМ через `vmrun` и ждёт, пока cloud-init установит `open-vm-tools` и ВМ сообщит IP (до 8 минут).
+1. Locates `qemu-img.exe` and `vmrun.exe`.
+2. Generates `user-data` and `meta-data` and builds `seed.iso` from them (volume label `cidata`, ISO9660 + **Joliet** file system — without Joliet cloud-init cannot find the files).
+3. Downloads the Debian 13 cloud image into the `_cache` folder (later runs use the cache).
+4. Grows the disk to 20 GB and converts qcow2 → VMDK.
+5. Creates the `.vmx` (4 CPUs, 4 GB RAM, NAT networking, `seed.iso` as the CD-ROM).
+6. Starts the VM through `vmrun` and waits until cloud-init installs `open-vm-tools` and the VM reports its IP (up to 8 minutes).
 
-Файлы ВМ создаются в папке `DebianCloudVM` рядом со скриптом.
+The VM files are created in the `DebianCloudVM` folder next to the script.
 
-### Подключение к ВМ
+### Connecting to the VM
 
-Скрипт выведет IP-адрес и готовую команду:
+The script prints the IP address and a ready-to-use command:
 
 ```powershell
-ssh vmsk@<IP_АДРЕС_ВМ>
+ssh vmsk@<VM_IP_ADDRESS>
 ```
 
-Если IP не определился, откройте консоль ВМ в VMware и выполните `ip a`.
+If the IP could not be detected, open the VM console in VMware and run `ip a`.
 
 ---
 
-## 🐳 Демонстрация «ВМ + Контейнеризация»
+## 🐳 Demo: "VM + containerization"
 
-Docker скриптами **не устанавливается** — поставьте его внутри ВМ самостоятельно. Например, на Ubuntu 24.04:
+The scripts **do not install** Docker — install it inside the VM yourself. For example, on Ubuntu 24.04:
 
 ```bash
 sudo apt update
 sudo apt install -y docker.io docker-compose-v2 git
 ```
 
-Затем разверните тестовое приложение:
+Then deploy the sample application:
 
 ```bash
-# Проверка версии Docker
+# Check the Docker version
 docker --version
 
-# Развёртывание тестового приложения
+# Deploy the sample application
 git clone https://github.com/dockersamples/example-voting-app.git
 cd example-voting-app
 sudo docker compose up -d
-sudo docker compose ps          # опубликованные порты приложений
+sudo docker compose ps          # published ports of the applications
 ```
 
-Приложение доступно по IP виртуальной машины на портах, указанных в `docker compose ps`.
+The application is available at the VM's IP address on the ports shown by `docker compose ps`.
 
 ---
 
-## 🩺 Решение проблем
+## 🩺 Troubleshooting
 
-| Симптом | Что делать |
+| Symptom | What to do |
 |---------|------------|
-| `ssh` отвечает отказом в первые минуты после старта | Cloud-init ещё настраивает систему. Подождите 1–3 минуты и повторите |
-| `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED` после пересоздания ВМ | Новая ВМ получила тот же IP, но другие ключи хоста: `ssh-keygen -R <IP>` |
-| `Permission denied (publickey)` | В `user-data` / `$sshPubKey` не тот публичный ключ. Сверьте отпечатки: `ssh-keygen -lf ~/.ssh/id_ed25519.pub` |
-| Не работает вход по паролю | Пароль заблокирован cloud-init по умолчанию — добавьте `lock_passwd: false` (см. раздел про ключ и пароль) |
-| `create_cloud_vm.sh` падает на копировании образа | Базовый образ не скачан в `/var/lib/libvirt/images/` или называется иначе (см. шаг 2 варианта A) |
-| ВМ в VMware не получает IP | Проверьте, что ВМ загрузилась и cloud-init дошёл до конца: внутри ВМ `cloud-init status --long` |
+| `ssh` refuses the connection in the first minutes after boot | Cloud-init is still configuring the system. Wait 1–3 minutes and try again |
+| `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED` after recreating the VM | The new VM got the same IP but different host keys: `ssh-keygen -R <IP>` |
+| `Permission denied (publickey)` | The public key in `user-data` / `$sshPubKey` is not yours. Compare fingerprints: `ssh-keygen -lf ~/.ssh/id_ed25519.pub` |
+| Password login does not work | cloud-init locks the password by default — add `lock_passwd: false` (see the key and password section) |
+| `create_cloud_vm.sh` fails while copying the image | The base image has not been downloaded to `/var/lib/libvirt/images/` or has a different name (see step 2 of option A) |
+| The VMware VM gets no IP | Check that the VM has booted and cloud-init has finished: inside the VM run `cloud-init status --long` |
 
 ---
 
-# С любовью от **Vmsk_Wivi** 🌸
+# With love from **Vmsk_Wivi** 🌸
