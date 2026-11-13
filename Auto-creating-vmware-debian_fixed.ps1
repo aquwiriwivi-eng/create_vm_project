@@ -25,7 +25,6 @@ $debianUrl = 'https://cloud.debian.org/images/cloud/trixie/latest/debian-13-gene
 $sshUser   = 'vmsk'
 $sshPubKey = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINncl4erfsbxC0CRmRGfu1sPakZA6rmhpufrEyBtDlr1 admin@DESKTOP-7CGROD6' # Your ssh pubkey
 # SHA-512 хеш пароля (openssl passwd -6 / mkpasswd -m sha-512)
-$passHash  = '$6$MKX7NFh.dBIRZeR/$ai3ukwag.33.ybM/3pAo46K1ZFAqJytXNM6nMzbhRTbJG6rt7WLFLjd3B6aIm/lklaDM3Rky8RufFdNUc13lr1' # Password = 12345
 # ===================================================================
 
 $baseDir    = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
@@ -71,14 +70,13 @@ function New-UserData([string]$User, [string]$PubKey, [string]$Hash, [string]$Ho
 #cloud-config
 hostname: $HostName
 manage_etc_hosts: true
-ssh_pwauth: true
+ssh_pwauth: false
 users:
   - name: $User
     gecos: $User
     shell: /bin/bash
     sudo: 'ALL=(ALL) NOPASSWD:ALL'
-    lock_passwd: false
-    passwd: '$Hash'
+    lock_passwd: true
     ssh_authorized_keys:
       - '$PubKey'
 package_update: true
