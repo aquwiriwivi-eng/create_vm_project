@@ -92,6 +92,19 @@ users:
 package_update: true
 packages:
   - open-vm-tools
+write_files:
+  - path: /etc/issue.d/10-ip.issue
+    content: |
+      IP: \4
+
+  - path: /etc/systemd/system/getty@tty1.service.d/wait-network.conf
+    content: |
+      [Unit]
+      Wants=network-online.target
+      After=network-online.target
+runcmd:
+  - systemctl daemon-reload
+  - systemctl restart getty@tty1
 "@
 }
 
