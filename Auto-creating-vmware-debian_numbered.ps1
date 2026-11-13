@@ -7,6 +7,7 @@
     Скрипт сначала ищет уже существующие ВМ (папки DebianCloudVM-NNN рядом со скриптом),
     затем создаёт следующую по порядку: DebianCloudVM-001, DebianCloudVM-002, ...
     Пользователь внутри ВМ называется vmsk-NNN (NNN - номер ВМ). Существующие ВМ не затрагиваются.
+    Дата, имя ВМ и IP-адрес дописываются в файл vm-info.txt рядом со скриптом (запись добавляется в конец).
 #>
 
 $ErrorActionPreference = 'Stop'
@@ -27,6 +28,7 @@ $sshPubKey = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINncl4erfsbxC0CRmRGfu1sPakZA6r
 $baseDir    = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
 $cacheDir   = Join-Path $baseDir '_cache'
 $cachedQcow = Join-Path $cacheDir 'debian-13-generic-amd64.qcow2'
+$infoFile   = Join-Path $baseDir 'vm-info.txt'   # сюда дописываются дата, имя ВМ и IP
 
 $utf8NoBom  = New-Object System.Text.UTF8Encoding $false
 
@@ -54,6 +56,23 @@ function Invoke-Native([string]$Exe, [string[]]$Arguments) {
 function Write-TextLF([string]$Path, [string]$Text) {
     # cloud-init надёжнее читает файлы с LF, без BOM
     [System.IO.File]::WriteAllText($Path, ($Text -replace "`r`n", "`n"), $utf8NoBom)
+}
+
+# Дописывает строку "дата | имя ВМ | IP" в конец vm-info.txt. Старые записи не затираются.
+function Save-VmInfo([string]$Name, [string]$Ip) {
+    try {
+        $nl   = [Environment]::NewLine
+        $text = ''
+        if (-not (Test-Path $infoFile)) {
+            $text += 'Дата и время        | Имя ВМ            | IP-адрес' + $nl
+        }
+        $text += ('{0} | {1} | {2}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Name, $Ip) + $nl
+        # UTF-8 с BOM только для нового файла - чтобы Блокнот правильно показал кириллицу
+        [System.IO.File]::AppendAllText($infoFile, $text, (New-Object System.Text.UTF8Encoding $true))
+        Write-Host "[+] Запись добавлена в $infoFile" -ForegroundColor Green
+    } catch {
+        Write-Host "[!] Не удалось записать в ${infoFile}: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
 }
 
 function New-UserData([string]$User, [string]$PubKey, [string]$HostName) {
@@ -289,6 +308,7 @@ Write-Host "[+] ВМ создана: $vmDir" -ForegroundColor Green
 
 if (-not $vmrun) {
     Write-Host '[!] vmrun.exe не найден - откройте .vmx в VMware вручную.' -ForegroundColor Yellow
+    Save-VmInfo $vmName 'не получен (ВМ не запущена: vmrun.exe не найден)'
     return
 }
 
@@ -310,7 +330,9 @@ Write-Host ''
 if ($vmIp) {
     Write-Host "[SUCCESS] $vmName, IP: $vmIp" -ForegroundColor Green
     Write-Host "    ssh $sshUser@$vmIp" -ForegroundColor White
+    Save-VmInfo $vmName $vmIp
 } else {
     Write-Host '[!] IP не получен. Откройте консоль ВМ, войдите как $sshUser и выполните: ip a' -ForegroundColor Yellow
     Write-Host '    Диагностика внутри ВМ: cloud-init status --long ; sudo tail -n 50 /var/log/cloud-init.log' -ForegroundColor Yellow
+    Save-VmInfo $vmName 'не получен'
 }
